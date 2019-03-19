@@ -8,6 +8,13 @@ using namespace winrt;
 using namespace test_component_base;
 using namespace test_component_derived::Nested;
 
+namespace
+{
+    struct HierarchyE : HierarchyDT<HierarchyE>
+    {
+    };
+}
+
 TEST_CASE("hierarchy")
 {
     HierarchyA a;
@@ -52,5 +59,23 @@ TEST_CASE("hierarchy")
         .as<HierarchyC>()
         .as<HierarchyD>());
 
+    auto e = make<HierarchyE>();
+
+    REQUIRE(e.as<IUnknown>() == weak_ref<HierarchyD>(e).get()
+        .as<IUnknown>()
+        .as<IInspectable>()
+        .as<IWeakReferenceSource>()
+        .as<IAgileObject>()
+        .as<IMarshal>()
+        .as<HierarchyA>()
+        .as<HierarchyB>()
+        .as<HierarchyC>()
+        .as<HierarchyD>()
+        .as<IUnknown>());
+}
+
+TEST_CASE("hierarchy_fail")
+{
+    HierarchyD d;
     REQUIRE(d.try_as<IWeakReference>() == nullptr);
 }

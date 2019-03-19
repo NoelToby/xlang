@@ -10,8 +10,6 @@ using namespace test_component_derived::Nested;
 
 TEST_CASE("hierarchy")
 {
-    // TODO: make sure this excercises all the wonky code paths in implements and wrap_as_result
-
     HierarchyA a;
     REQUIRE(a == weak_ref<HierarchyA>(a).get()
         .as<IUnknown>()
@@ -53,4 +51,6 @@ TEST_CASE("hierarchy")
         .as<HierarchyB>()
         .as<HierarchyC>()
         .as<HierarchyD>());
+
+    REQUIRE(d.try_as<IWeakReference>() == nullptr);
 }
